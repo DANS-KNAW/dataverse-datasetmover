@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>DataverseNL - Dataset Mover Tool</title>
+    <style type="text/css">
+		.textPlacement {
+			margin: 12px;
+		}
+	</style>
+</h:head>
+<h:body>
+    <h2>Replacing dataset to another subdataverse</h2>
+
+    <h:form id="login-form">
+        <p:panel id="panel" header="Login">
+
+            <p:messages id="msg" closable="true" />
+
+            <h:panelGrid columns="3" cellpadding="5">
+                <p:outputLabel for="username" value="Username:" />
+                <p:inputText id="username" value="#{dmtBean.userName}" required="true" label="Username">
+                    <f:validateLength minimum="2" />
+                </p:inputText>
+                <p:message for="username" display="icon" />
+
+                <p:outputLabel for="password" value="Password:" />
+                <p:password id="password" value="#{dmtBean.password}" label="Password" required="true">
+                    <f:validateLength minimum="2" />
+                    <p:ajax update="msgPassword" event="keyup" />
+                </p:password>
+                <p:message for="password" id="msgPassword" display="icon" />
+
+            </h:panelGrid>
+            <p:commandButton value="Login" id="nonAjax" action="#{dmtBean.validateUserLogin}" ajax="false" />
+
+        </p:panel>
+    </h:form>
+</h:body>
+</html>
+

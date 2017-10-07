@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>JSF Authentication</title>
+    <style type="text/css">
+		.textPlacement {
+			margin: 12px;
+		}
+	</style>
+</h:head>
+<h:body>
+    <p:panel id="dataset-panel" header="Dataset to move">
+        <h:form id="dataset-form">
+            <p:messages id="messages" closable="true" />
+            <h:panelGrid columns="4" cellpadding="5">
+                <h:outputLabel for="dataset" value="hdl:" style="font-weight:bold" />
+                <p:selectOneMenu id="prefix" value="#{dmtBean.prefix}">
+                    <f:selectItem itemLabel="10411" itemValue="10411" />
+                    <f:selectItem itemLabel="10695" itemValue="10695" />
+                </p:selectOneMenu>
+                <p:inputText id="dataset" value="#{dmtBean.dataset}" />
+                <p:commandButton widgetVar="validateButton"
+                                 onclick="PF('validateButton').disable()"
+                                 oncomplete="PF('validateButton').enable()"
+                                 value="Validate" actionListener="#{dmtBean.validateDataset}"
+                                 update=":dataset-form:messages :dataverse-form:alias"  />
+            </h:panelGrid>
+        </h:form>
+    </p:panel>
+
+    <p:panel id="dataverse-panel" header="Target Dataverse Alias">
+        <h:form id="dataverse-form">
+            <p:messages id="move-msg" closable="true" />
+            <h:panelGrid columns="1" cellpadding="5">
+
+                <h:selectOneMenu id="alias"
+                                 immediate="true"
+                                 value="#{dmtBean.alias}"
+                                 valueChangeListener="#{dmtBean.handleChange}">
+                    <f:selectItem itemValue="#{null}" itemLabel="--select--" />
+                    <f:selectItems value="#{dmtBean.aliases}" />
+                    <p:ajax event="valueChange" immediate="true" process="@this" update=":dataverse-form:move-msg"/>
+
+                </h:selectOneMenu>
+
+            </h:panelGrid>
+            <p:commandButton
+                    widgetVar="moveButton"
+                    onclick="PF('moveButton').disable()"
+                    oncomplete="PF('moveButton').enable()"
+                    value="Move" actionListener="#{dmtBean.move}" update=":dataverse-form:move-msg">
+                <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-alert" />
+            </p:commandButton>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+
+        </h:form>
+
+    </p:panel>
+
+</h:body>
+</html>
