@@ -106,12 +106,13 @@ public class LocalDvnApiConnector {
     }
 
     public boolean updateDatasetOwner(String dataverseAlias, int datasetId, String persistentId) {
+        //Unfortunately, there is no api for updating dataset owner
         DvobjectBean dob = new DvobjectBean();
         boolean succes = dob.updateOwnerId(findDataverseIdByAlias(dataverseAlias), datasetId);
         if (succes) {
             //curl http://localhost:8080/api/admin/index/dataset?persistentId=hdl:10411/YOSOSF
             String[] hdl = persistentId.split("/");
-            String url = HOST + "datasets/:persistentId/?persistentId=hdl%3A" + hdl[0] + "%2F" + hdl[1];
+            String url = HOST + "admin/index/dataset?persistentId=hdl%3A" + hdl[0] + "%2F" + hdl[1];
             JsonObject jo = getResponseAsJsonObject(url);
             succes = (jo != null && jo.getString("status").equals("OK"));
         }
