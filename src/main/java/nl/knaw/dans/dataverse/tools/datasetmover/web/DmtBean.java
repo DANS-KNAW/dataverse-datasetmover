@@ -1,14 +1,12 @@
 package nl.knaw.dans.dataverse.tools.datasetmover.web;
 
-import nl.knaw.dans.dataverse.tools.datasetmover.api.LocalDvnApiConnector;
-import nl.knaw.dans.dataverse.tools.datasetmover.api.db.DvobjectBean;
+import nl.knaw.dans.dataverse.tools.datasetmover.api.DvnApiConnector;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ValueChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,7 @@ public class DmtBean {
 
     private String userName;
     private String password;
-    private LocalDvnApiConnector ldac;
+    private DvnApiConnector ldac;
     private List<String> aliases = new ArrayList<String>();
     private String dataset;
 
@@ -64,11 +62,11 @@ public class DmtBean {
         clear();
         String navResult = "success";
 
-        ldac = new LocalDvnApiConnector(userName, password);
+        ldac = new DvnApiConnector(userName, password);
 
-        boolean userAuthenticated = ldac.isSuperUser();
-        if ( ! userAuthenticated ) {
-            errorMsg("Invalid Credentials");
+        boolean superUserAuthenticated = ldac.isSuperUser();
+        if ( ! superUserAuthenticated ) {
+            errorMsg("Invalid Credentials or not super user");
             navResult = "index";
         }
         return navResult;
@@ -99,7 +97,7 @@ public class DmtBean {
             infoMsg(prefix + "/" + dataset + " has id: " + datasetId);
         } else {
             aliases = new ArrayList<String>();
-            errorMsg(LocalDvnApiConnector.ERROR_DATASET_NOT_FOUND);
+            errorMsg("No dataset '" + prefix + "/" + dataset + "' found.");
         }
     }
 

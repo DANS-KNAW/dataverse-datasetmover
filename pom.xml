@@ -47,11 +47,7 @@
         <artifactId>jersey-bundle</artifactId>
         <version>1.19.3</version>
     </dependency>
-    <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-validator</artifactId>
-        <version>5.0.3.Final</version>
-    </dependency>
+
       <!-- joda time -->
       <!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
       <dependency>
@@ -67,11 +63,11 @@
           <version>2.5</version>
       </dependency>
 
-      <dependency>
+      <!--<dependency>
           <groupId>org.mindrot</groupId>
           <artifactId>jbcrypt</artifactId>
           <version>0.3m</version>
-      </dependency>
+      </dependency>-->
 
       <dependency>
           <groupId>org.primefaces</groupId>
