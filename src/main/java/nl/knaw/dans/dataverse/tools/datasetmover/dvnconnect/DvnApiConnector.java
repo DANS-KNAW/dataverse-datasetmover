@@ -1,4 +1,4 @@
-package nl.knaw.dans.dataverse.tools.datasetmover.api;
+package nl.knaw.dans.dataverse.tools.datasetmover.dvnconnect;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;

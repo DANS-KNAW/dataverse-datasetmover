@@ -1,6 +1,6 @@
 package nl.knaw.dans.dataverse.tools.datasetmover.web;
 
-import nl.knaw.dans.dataverse.tools.datasetmover.api.DvnApiConnector;
+import nl.knaw.dans.dataverse.tools.datasetmover.dvnconnect.DvnApiConnector;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
