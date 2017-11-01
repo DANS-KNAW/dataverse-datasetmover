@@ -141,4 +141,9 @@ public class DmtBean {
         alias = "";
         aliases = new ArrayList<String>();
     }
+
+    public String logout() {
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        return "/index.xhtml?faces-redirect=true";
+    }
 }
