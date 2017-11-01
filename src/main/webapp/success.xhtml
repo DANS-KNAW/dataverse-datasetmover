@@ -63,6 +63,13 @@
         </h:form>
 
     </p:panel>
+    <p:panel id="logout-panel">
+        <h:form id="logout-form">
+            <h:panelGrid>
+                <p:commandButton value="Logout" action="#{dmtBean.logout}" ajax="false" />
+            </h:panelGrid>
+        </h:form>
+    </p:panel>
 
 </h:body>
 </html>
