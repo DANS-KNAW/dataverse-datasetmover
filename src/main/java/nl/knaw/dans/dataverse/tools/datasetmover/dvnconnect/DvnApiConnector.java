@@ -67,7 +67,7 @@ public class DvnApiConnector {
             } else
                 LOG.error(url + " is not valid.");
         } catch (IOException e) {
-            LOG.error("IOException, message: " + e.getMessage());
+            LOG.error("Failed to connect, for url: " + url + ". Message: " + e.getMessage());
         }
         return jsonObject;
     }
@@ -139,7 +139,7 @@ public class DvnApiConnector {
 
 
         } catch (IOException e) {
-            LOG.error("IOException, message: " + e.getMessage());
+            LOG.error("Failed to connect, for url: " + targetDataverseAlias + ". Message: " + e.getMessage());
         }
 
         return false;
@@ -158,7 +158,7 @@ public class DvnApiConnector {
         } catch (MalformedURLException e) {
             LOG.error("MalformedURLException, message: " + e.getMessage());
         } catch (IOException e) {
-            LOG.error("IOException, message: " + e.getMessage());
+            LOG.error("Failed to connect, for url: " + url + ". Message: " + e.getMessage());
         }
         return null;
     }
