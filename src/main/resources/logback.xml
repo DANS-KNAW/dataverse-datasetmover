@@ -14,8 +14,8 @@
             <!-- daily rollover -->
             <fileNamePattern>dmt.log.%d{yyyy-MM-dd}.log</fileNamePattern>
 
-            <!-- keep 1 days' worth of history -->
-            <maxHistory>5</maxHistory>
+            <!-- keep 7 days' worth of history -->
+            <maxHistory>7</maxHistory>
         </rollingPolicy>
 
         <encoder>
