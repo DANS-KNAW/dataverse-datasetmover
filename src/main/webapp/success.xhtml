@@ -1,10 +1,10 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 <h:head>
-    <title>JSF Authentication</title>
+    <title>Replacing dataset to another subdataverse</title>
     <style type="text/css">
 		.textPlacement {
 			margin: 12px;
@@ -62,6 +62,13 @@
 
         </h:form>
 
+    </p:panel>
+    <p:panel id="logout-panel">
+        <h:form id="logout-form">
+            <h:panelGrid>
+                <p:commandButton value="Logout" action="#{dmtBean.logout}" ajax="false" />
+            </h:panelGrid>
+        </h:form>
     </p:panel>
 
 </h:body>

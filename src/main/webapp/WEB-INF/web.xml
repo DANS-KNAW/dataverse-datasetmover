@@ -3,14 +3,9 @@
          xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0">
-  <display-name>DataverseDatasetMoverTool</display-name>
+  <display-name>Replacing dataset to another subdataverse</display-name>
   <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-    <welcome-file>index.htm</welcome-file>
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>default.html</welcome-file>
-    <welcome-file>default.htm</welcome-file>
-    <welcome-file>default.jsp</welcome-file>
+    <welcome-file>index.xhtml</welcome-file>
   </welcome-file-list>
 
   <servlet>
@@ -34,13 +29,4 @@
   <listener>
     <listener-class>com.sun.faces.config.ConfigureListener</listener-class>
   </listener>
-  <!--<servlet>-->
-    <!--<servlet-name>Dvobject Dataset Mover Tool Web Application</servlet-name>-->
-    <!--<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>-->
-    <!--<load-on-startup>1</load-on-startup>-->
-  <!--</servlet>-->
-  <!--<servlet-mapping>-->
-    <!--<servlet-name>Dvobject Dataset Mover Tool Web Application</servlet-name>-->
-    <!--<url-pattern>/api/*</url-pattern>-->
-  <!--</servlet-mapping>-->
 </web-app>

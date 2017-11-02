@@ -1,12 +1,15 @@
-package nl.knaw.dans.dataverse.tools.datasetmover.api;
+package nl.knaw.dans.dataverse.tools.datasetmover.dvnconnect;
 
-import nl.knaw.dans.dataverse.tools.datasetmover.api.db.DvobjectBean;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.json.*;
-import java.io.*;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -64,18 +67,19 @@ public class DvnApiConnector {
             } else
                 LOG.error(url + " is not valid.");
         } catch (IOException e) {
-            LOG.error("IOException, message: " + e.getMessage());
+            LOG.error("Failed to connect, for url: " + url + ". Message: " + e.getMessage());
         }
         return jsonObject;
     }
 
     private String getApiToken(String username, String password) {
-        JsonObject jo = getResponseAsJsonObject(HOST + "/builtin-users/" + username + "/api-token?password=" + password);
+        JsonObject jo = getResponseAsJsonObject(HOST + "builtin-users/" + username + "/api-token?password=" + password);
         if (jo != null && jo.getString("status").equals("OK")) {
             JsonObject dataJObject = jo.getJsonObject("data");
             if (dataJObject != null)
                 return dataJObject.getString("message");
         }
+        LOG.warn("No api token found for username '" + username + "' and password '" + password + "'.");
         return null;
     }
 
@@ -93,16 +97,14 @@ public class DvnApiConnector {
 
     public int findDatasetIdByIdentifier(String dataset) {
         String[] hdl = dataset.split("/");
-        //http://ddvn.dans.knaw.nl:8080/api/datasets/:persistentId/?persistentId=hdl:10411/10021
         JsonObject jo = getResponseAsJsonObject(HOST + "datasets/:persistentId/?persistentId=hdl%3A" + hdl[0] + "%2F" + hdl[1] + "&key=" + apiToken);
         if (jo != null && jo.getString("status").equals("OK"))
             return jo.getJsonObject("data").getInt("id");
-
+        LOG.warn("No dataset found. Dataset: " + dataset);
         return -1;
     }
 
     public int findDataverseIdByAlias(String alias) {
-        //http://ddvn.dans.knaw.nl:8080/api/dataverses/4tu?key=c7c57eaa-a133-4f2d-976a-5a40e69e7435
         JsonObject jo = getResponseAsJsonObject(HOST + "dataverses/" + alias + "?key=" + apiToken);
         if (jo != null && jo.getString("status").equals("OK"))
             return jo.getJsonObject("data").getInt("id");
@@ -110,18 +112,37 @@ public class DvnApiConnector {
         return -1;
     }
 
-    public boolean updateDatasetOwner(String dataverseAlias, int datasetId, String persistentId) {
-        //Unfortunately, there is no api for updating dataset owner
-        DvobjectBean dob = new DvobjectBean();
-        boolean succes = dob.updateOwnerId(findDataverseIdByAlias(dataverseAlias), datasetId);
-        if (succes) {
-            //run index
-            //curl http://localhost:8080/api/admin/index/dataset?persistentId=hdl:10411/YOSOSF
-            String[] hdl = persistentId.split("/");
-            JsonObject jo = getResponseAsJsonObject(HOST + "admin/index/dataset?persistentId=hdl%3A" + hdl[0] + "%2F" + hdl[1]);
-            succes = (jo != null && jo.getString("status").equals("OK"));
+    public boolean updateDatasetOwner(int datasetId, String persistentId, String targetDataverseAlias) {
+
+        JsonObject jsonObject = null;
+        try {
+            URL obj = new URL(HOST + "datasets/"+ datasetId + "/moveTo/" + targetDataverseAlias + "?key=" + apiToken);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("POST");
+            con.setDoOutput(true);
+            if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                JsonReader reader = Json.createReader(
+                        new StringReader(IOUtils.toString(con.getInputStream(), "UTF-8")));
+
+                jsonObject = reader.readObject();
+                reader.close();
+
+                if (jsonObject != null && jsonObject.getString("status").equals("OK")) {
+                    //run index
+                    String[] hdl = persistentId.split("/");
+                    JsonObject joi = getResponseAsJsonObject(HOST + "admin/index/dataset?persistentId=hdl%3A" + hdl[0] + "%2F" + hdl[1]);
+                    return (joi != null && joi.getString("status").equals("OK"));
+                }
+                return false;
+            }
+
+
+        } catch (IOException e) {
+            LOG.error("Failed to connect, for url: " + targetDataverseAlias + ". Message: " + e.getMessage());
         }
-        return succes;
+
+        return false;
     }
 
     private URL getValidApiUrl(String url) {
@@ -137,7 +158,7 @@ public class DvnApiConnector {
         } catch (MalformedURLException e) {
             LOG.error("MalformedURLException, message: " + e.getMessage());
         } catch (IOException e) {
-            LOG.error("IOException, message: " + e.getMessage());
+            LOG.error("Failed to connect, for url: " + url + ". Message: " + e.getMessage());
         }
         return null;
     }

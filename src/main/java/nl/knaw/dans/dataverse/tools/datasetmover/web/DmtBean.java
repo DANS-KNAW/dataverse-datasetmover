@@ -1,6 +1,6 @@
 package nl.knaw.dans.dataverse.tools.datasetmover.web;
 
-import nl.knaw.dans.dataverse.tools.datasetmover.api.DvnApiConnector;
+import nl.knaw.dans.dataverse.tools.datasetmover.dvnconnect.DvnApiConnector;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -105,7 +105,7 @@ public class DmtBean {
     public void move(ActionEvent actionEvent){
         if (alias != null && datasetId > 0) {
             String persistentId = prefix + "/" + dataset;
-            boolean success = ldac.updateDatasetOwner(alias, datasetId, persistentId);
+            boolean success = ldac.updateDatasetOwner(datasetId, persistentId, alias);
             if (success)
                 infoMsg("The dataset hdl:" + prefix + "/" + dataset + " is moved to '" + alias + "'.");
             else
@@ -132,15 +132,18 @@ public class DmtBean {
 
     public void handleChange(final ValueChangeEvent event){
         alias = (String)event.getNewValue();
-        if (dataset != null && alias != null) {
-            int dvnId = ldac.findDataverseIdByAlias(alias);
-            infoMsg("The dataset hdl:" + prefix + "/" + dataset + " will be moved to '" + alias + "(id: " + dvnId + ")'.");
-        }
+        if (dataset != null && alias != null)
+            infoMsg("The dataset hdl:" + prefix + "/" + dataset + " will be moved to '" + alias + "'.");
     }
 
     private void clear(){
         dataset = "";
         alias = "";
         aliases = new ArrayList<String>();
+    }
+
+    public String logout() {
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        return "/index.xhtml?faces-redirect=true";
     }
 }
