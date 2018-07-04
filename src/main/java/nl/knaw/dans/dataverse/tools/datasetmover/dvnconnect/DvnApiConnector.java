@@ -92,7 +92,7 @@ public class DvnApiConnector {
             if (jArrayItems !=null)
                 return jArrayItems.stream().map(json -> ((JsonObject) json).getString("identifier")).collect(Collectors.toList());
         }
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     public int findDatasetIdByIdentifier(String dataset) {
@@ -114,9 +114,9 @@ public class DvnApiConnector {
 
     public boolean updateDatasetOwner(int datasetId, String persistentId, String targetDataverseAlias) {
 
-        JsonObject jsonObject = null;
+        JsonObject jsonObject;
         try {
-            URL obj = new URL(HOST + "datasets/"+ datasetId + "/moveTo/" + targetDataverseAlias + "?key=" + apiToken);
+            URL obj = new URL(HOST + "datasets/"+ datasetId + "/move/" + targetDataverseAlias + "?key=" + apiToken);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
             con.setRequestMethod("POST");
