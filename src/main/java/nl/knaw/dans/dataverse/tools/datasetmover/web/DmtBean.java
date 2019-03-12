@@ -19,7 +19,7 @@ public class DmtBean {
     private String password;
     private DvnApiConnector ldac;
     private List<String> aliases = new ArrayList<String>();
-    private String dataset;
+    private String dataset; // contains the Persistent ID with 'hdl:' or 'doi:' and prefix
 
     public int getDatasetId() {
         return datasetId;
@@ -31,16 +31,6 @@ public class DmtBean {
 
     private int datasetId;
     private String alias;
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    private String prefix;
 
     public String getUserName() {
         return userName;
@@ -90,24 +80,23 @@ public class DmtBean {
 
     public void validateDataset(ActionEvent actionEvent) {
         if (dataset != null && !dataset.trim().isEmpty())
-            datasetId = ldac.findDatasetIdByIdentifier(prefix + "/" + dataset);
+            datasetId = ldac.findDatasetIdByIdentifier(dataset);
 
         if (datasetId > 0) {
             aliases = ldac.getAllDataverseAliases();
-            infoMsg(prefix + "/" + dataset + " has id: " + datasetId);
+            infoMsg(dataset + " has id: " + datasetId);
         } else {
             aliases = new ArrayList<String>();
-            errorMsg("No dataset '" + prefix + "/" + dataset + "' found.");
+            errorMsg("No dataset '" + dataset + "' found.");
         }
     }
 
-
     public void move(ActionEvent actionEvent){
         if (alias != null && datasetId > 0) {
-            String persistentId = prefix + "/" + dataset;
+            String persistentId = dataset;
             boolean success = ldac.updateDatasetOwner(datasetId, persistentId, alias);
             if (success)
-                infoMsg("The dataset hdl:" + prefix + "/" + dataset + " is moved to '" + alias + "'.");
+                infoMsg("The dataset PID: " + dataset + " is moved to '" + alias + "'.");
             else
                 errorMsg("FATAL ERROR! Dataverse alias: " + alias + ". DatasetId: " + datasetId + " Dataset: " + dataset);
         } else
@@ -133,7 +122,7 @@ public class DmtBean {
     public void handleChange(final ValueChangeEvent event){
         alias = (String)event.getNewValue();
         if (dataset != null && alias != null)
-            infoMsg("The dataset hdl:" + prefix + "/" + dataset + " will be moved to '" + alias + "'.");
+            infoMsg("The dataset PID: " + dataset + " will be moved to '" + alias + "'.");
     }
 
     private void clear(){

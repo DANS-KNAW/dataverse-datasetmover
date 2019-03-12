@@ -10,9 +10,11 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +36,6 @@ public class DvnApiConnector {
 
     private boolean superUser;
 
-
     private String HOST = "http://localhost:8080/api/";
 
     public DvnApiConnector(String username, String password) {
@@ -42,8 +43,8 @@ public class DvnApiConnector {
         apiToken = getApiToken(username, password);
         //only superUser may use this service
         validateSuperUser();
-
     }
+
     private void validateSuperUser() {
         if (apiToken != null) {
             JsonObject jo = getResponseAsJsonObject(HOST + "admin/authenticatedUsers/" + username);
@@ -53,7 +54,6 @@ public class DvnApiConnector {
             }
         }
     }
-
 
     private JsonObject getResponseAsJsonObject(String url) {
         JsonObject jsonObject = null;
@@ -83,10 +83,10 @@ public class DvnApiConnector {
         return null;
     }
 
-
     public List<String> getAllDataverseAliases() {
         //There is no dataverse native api for retrieving a list of dataverses. So, we use solr search
         JsonObject jObject = getResponseAsJsonObject(HOST + "search?q=*&type=dataverse&key=" + apiToken + "&per_page=1000&sort=identifier&order=asc");
+        // Note that if we have more than a 1000 verses we need a different UI anyway
         if (jObject != null && jObject.getJsonObject("data") != null) {
             JsonArray jArrayItems = jObject.getJsonObject("data").getJsonArray("items");
             if (jArrayItems !=null)
@@ -95,12 +95,19 @@ public class DvnApiConnector {
         return new ArrayList<>();
     }
 
-    public int findDatasetIdByIdentifier(String dataset) {
-        String[] hdl = dataset.split("/");
-        JsonObject jo = getResponseAsJsonObject(HOST + "datasets/:persistentId/?persistentId=hdl%3A" + hdl[0] + "%2F" + hdl[1] + "&key=" + apiToken);
+    public int findDatasetIdByIdentifier(String persistentId) {
+        // url encode the persistenId string
+        String idParamVal = "";
+        try {
+            idParamVal = URLEncoder.encode(persistentId, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            LOG.error("Could not encode persistentId", e);
+            return -1;
+        }
+        JsonObject jo = getResponseAsJsonObject(HOST + "datasets/:persistentId/?persistentId=" + idParamVal + "&key=" + apiToken);
         if (jo != null && jo.getString("status").equals("OK"))
             return jo.getJsonObject("data").getInt("id");
-        LOG.warn("No dataset found. Dataset: " + dataset);
+        LOG.warn("No dataset found. Dataset: " + persistentId);
         return -1;
     }
 
@@ -113,9 +120,9 @@ public class DvnApiConnector {
     }
 
     public boolean updateDatasetOwner(int datasetId, String persistentId, String targetDataverseAlias) {
-
         JsonObject jsonObject;
         try {
+            LOG.info("Moving dataset: " + datasetId + " to " + targetDataverseAlias);
             URL obj = new URL(HOST + "datasets/"+ datasetId + "/move/" + targetDataverseAlias + "?key=" + apiToken);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -129,15 +136,14 @@ public class DvnApiConnector {
                 reader.close();
 
                 if (jsonObject != null && jsonObject.getString("status").equals("OK")) {
+                    String idParamVal = URLEncoder.encode(persistentId, "UTF-8");
+                    LOG.info("Reindexing dataset: " + idParamVal);
                     //run index
-                    String[] hdl = persistentId.split("/");
-                    JsonObject joi = getResponseAsJsonObject(HOST + "admin/index/dataset?persistentId=hdl%3A" + hdl[0] + "%2F" + hdl[1]);
+                    JsonObject joi = getResponseAsJsonObject(HOST + "admin/index/dataset?persistentId=" + idParamVal);
                     return (joi != null && joi.getString("status").equals("OK"));
                 }
                 return false;
             }
-
-
         } catch (IOException e) {
             LOG.error("Failed to connect, for url: " + targetDataverseAlias + ". Message: " + e.getMessage());
         }
@@ -164,5 +170,3 @@ public class DvnApiConnector {
     }
 
 }
-
-
