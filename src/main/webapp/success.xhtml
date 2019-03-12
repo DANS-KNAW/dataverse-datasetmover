@@ -16,11 +16,8 @@
         <h:form id="dataset-form">
             <p:messages id="messages" closable="true" />
             <h:panelGrid columns="4" cellpadding="5">
-                <h:outputLabel for="dataset" value="hdl:" style="font-weight:bold" />
-                <p:selectOneMenu id="prefix" value="#{dmtBean.prefix}">
-                    <f:selectItem itemLabel="10411" itemValue="10411" />
-                    <f:selectItem itemLabel="10695" itemValue="10695" />
-                </p:selectOneMenu>
+                <!-- Note: Could get autority and prefix (+ shoulder) from config if this was part of Dataverse -->
+                <h:outputLabel for="dataset" value="persistentId" style="font-weight:bold" />
                 <p:inputText id="dataset" value="#{dmtBean.dataset}" />
                 <p:commandButton widgetVar="validateButton"
                                  onclick="PF('validateButton').disable()"
