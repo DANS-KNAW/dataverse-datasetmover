@@ -12,7 +12,7 @@ How to install:
 1. Download the latest release from [https://github.com/DANS-KNAW/dataverse-datasetmover](https://github.com/DANS-KNAW/dataverse-datasetmover).
 2. Either use the released war file, or download the sources and build with `mvn clean install`.
 3. Deploy the `dmt.war` file to Glassfish where Dataverse is also deployed.
-4. Open `http://<domain>/dmt/faces/index.html`
+4. Open `http://<domain>/dmt/faces/index.xhtml`
 
 Instructions for usage:
 1. Browse to `dmt/faces/index.xhtml` on the same host as you have the Dataverse application instance running.
