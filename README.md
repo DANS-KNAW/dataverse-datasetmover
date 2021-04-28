@@ -1,5 +1,5 @@
 # Dataverse Datasetmover Tool 
-Move a dataset to another dataverse. (Note that this is obsolete since dataverse v4.14)
+Move a dataset to another dataverse. (__Note that this is obsolete since dataverse v4.14__)
 
 Sometimes you need to move a dataset from the verse it is in to another verse. 
 For instance if a given verse is split into subverses and you want to divde the datasets among those subverses. 
